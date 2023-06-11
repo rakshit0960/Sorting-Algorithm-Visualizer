@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#root {
+    @apply bg-bgColor
+}
+
+.btnOption {
+    @apply border-2 border-gray-500 px-3 py-2 text-xl rounded-md hover:border-gray-300
+}
+
+.flexItemOption {
+    @apply flex-1 flex justify-center items-center px-4
+}
+
+.optionBox {
+    @apply mx-10 h-16 flex justify-between items-center bg-lightBgColor rounded-b-lg divide-gray-600 divide-x-2 text-textColor
+}
