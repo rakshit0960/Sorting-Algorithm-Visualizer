@@ -15,6 +15,8 @@ export default function ArrayVisual({ arrayInfo }) {
                 ? "red"
                 : arrayInfo.color.green.includes(index)
                 ? "green"
+                : arrayInfo.color.white.includes(index)
+                ? "white"
                 : ""
             }
           />

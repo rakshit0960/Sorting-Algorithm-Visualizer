@@ -2,6 +2,7 @@
 
 import "../index.css";
 export default function OptionMenu({
+  algorithm,
   setAlgorithm,
   GenerateNewArray,
   changeSize,
@@ -19,7 +20,7 @@ export default function OptionMenu({
     <>
       <div className="optionBox">
         <div className="flexItemOption">
-          <select className="btnOption bg-lightBgColor" onChange={e => setAlgorithm(e.target.value)}>
+          <select className="btnOption bg-lightBgColor" onChange={e => setAlgorithm(e.target.value)} value={algorithm}>
             {Algorithms.map((option, index) => {
               return <option key={index}>{option}</option>;
             })}
