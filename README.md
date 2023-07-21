@@ -39,8 +39,8 @@ Start the server
 
 ## Screenshots
 
-![App Screenshot](./screenShots\Screenshot1.png)
-![App Screenshot](./screenShots\Screenshot2.png)
-![App Screenshot](./screenShots\Screenshot3.png)
-![App Screenshot](./screenShots\Screenshot4.png)
+![App Screenshot](./screenShots/Screenshot1.png)
+![App Screenshot](./screenShots/Screenshot2.png)
+![App Screenshot](./screenShots/Screenshot3.png)
+![App Screenshot](./screenShots/Screenshot4.png)
 
