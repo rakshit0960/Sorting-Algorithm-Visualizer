@@ -3,6 +3,9 @@
 
 Easy to Understand Visualization Sorting Algorithms like mergeSort, insertion Sort ect.
 
+## delpoyment
+- #### [link](https://snazzy-praline-f2e84a.netlify.app/)
+
 ## Run Locally
 
 Clone the project
