@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 #root {
-    @apply bg-bgColor
+    @apply bg-bgColor min-h-screen
 }
 
 .btnOption {
-    @apply border-2 border-gray-500 px-3 py-2 text-xl rounded-md hover:border-gray-300
+    @apply border-2 border-gray-500 px-3 py-2 text-xl rounded-md hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed
 }
 
 .flexItemOption {
@@ -16,4 +16,77 @@
 
 .optionBox {
     @apply mx-10 h-16 flex justify-between items-center bg-lightBgColor rounded-b-lg divide-gray-600 divide-x-2 text-textColor
+}
+
+.graph-node {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #2c3340;
+    border: 1px solid #3a4352;
+    box-sizing: border-box;
+    transition: background-color 120ms ease-out, transform 120ms ease-out;
+}
+
+.graph-node.node-start {
+    background-color: #22c55e;
+    border-color: #16a34a;
+}
+
+.graph-node.node-end {
+    background-color: #ef4444;
+    border-color: #b91c1c;
+}
+
+.graph-node.node-wall {
+    background-color: #0f172a;
+    border-color: #0f172a;
+}
+
+.graph-node.node-visited {
+    background-color: #00ADB5;
+    border-color: #0e7c82;
+    animation: visitedPulse 420ms ease-out;
+}
+
+.graph-node.node-path {
+    background-color: #facc15;
+    border-color: #ca8a04;
+    animation: pathPop 360ms ease-out;
+}
+
+.legend-swatch {
+    width: 1rem;
+    height: 1rem;
+    display: inline-block;
+}
+
+@keyframes visitedPulse {
+    0% {
+        transform: scale(0.3);
+        background-color: #fbbf24;
+        border-radius: 50%;
+    }
+    50% {
+        transform: scale(1.15);
+        background-color: #0ea5e9;
+    }
+    100% {
+        transform: scale(1);
+        background-color: #00ADB5;
+        border-radius: 0;
+    }
+}
+
+@keyframes pathPop {
+    0% {
+        transform: scale(0.4);
+        background-color: #fde68a;
+    }
+    60% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        background-color: #facc15;
+    }
 }
