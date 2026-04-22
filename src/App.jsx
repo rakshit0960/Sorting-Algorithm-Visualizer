@@ -7,7 +7,7 @@ function App() {
 
   return (
     <div className="w-full min-h-screen">
-      <div className="mx-10 mb-2 flex justify-center gap-2 py-3 text-textColor">
+      <div className="mx-2 sm:mx-10 mb-2 flex flex-wrap justify-center gap-2 py-3 text-textColor">
         <button
           className={`btnOption ${view === "SORTING" ? "bg-customBlue border-customBlue" : ""}`}
           onClick={() => setView("SORTING")}
