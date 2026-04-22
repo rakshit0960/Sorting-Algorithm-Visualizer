@@ -7,15 +7,15 @@
 }
 
 .btnOption {
-    @apply border-2 border-gray-500 px-3 py-2 text-xl rounded-md hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed
+    @apply border-2 border-gray-500 px-2 py-1 text-sm rounded-md hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed sm:px-3 sm:py-2 sm:text-xl
 }
 
 .flexItemOption {
-    @apply flex-1 flex justify-center items-center px-4
+    @apply flex-1 flex justify-center items-center px-2 py-2 sm:px-4
 }
 
 .optionBox {
-    @apply mx-10 h-16 flex justify-between items-center bg-lightBgColor rounded-b-lg divide-gray-600 divide-x-2 text-textColor
+    @apply mx-2 sm:mx-10 flex flex-wrap items-center bg-lightBgColor rounded-b-lg text-textColor sm:h-16 sm:flex-nowrap sm:justify-between sm:divide-gray-600 sm:divide-x-2
 }
 
 .graph-node {
@@ -25,6 +25,21 @@
     border: 1px solid #3a4352;
     box-sizing: border-box;
     transition: background-color 120ms ease-out, transform 120ms ease-out;
+    touch-action: none;
+}
+
+@media (max-width: 768px) {
+    .graph-node {
+        width: 1.1rem;
+        height: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .graph-node {
+        width: 0.85rem;
+        height: 0.85rem;
+    }
 }
 
 .graph-node.node-start {
