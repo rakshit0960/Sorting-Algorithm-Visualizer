@@ -1,6 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { bfs, dfs } from "../algorithms/graphAlgorithms";
+import { astar, bfs, dfs, dijkstra, floydWarshall } from "../algorithms/graphAlgorithms";
+
+const ALGORITHMS = {
+  BFS: { label: "BREADTH-FIRST SEARCH", run: bfs },
+  DFS: { label: "DEPTH-FIRST SEARCH", run: dfs },
+  DIJKSTRA: { label: "DIJKSTRA'S ALGORITHM", run: dijkstra },
+  ASTAR: { label: "A* SEARCH", run: astar },
+  FLOYD_WARSHALL: { label: "FLOYD-WARSHALL", run: floydWarshall, heavy: true },
+};
 
 const ROWS = 20;
 const COLS = 40;
@@ -216,12 +224,26 @@ export default function GraphVisualizer() {
       return;
     }
 
+    const algoEntry = ALGORITHMS[algorithm];
+    if (!algoEntry) {
+      setStatus(`Unknown algorithm: ${algorithm}`);
+      return;
+    }
+
     isRunningRef.current = true;
     setIsRunning(true);
-    setStatus(`Running ${algorithm}...`);
+    setStatus(
+      algoEntry.heavy
+        ? `Computing ${algoEntry.label} (this may take a moment)...`
+        : `Running ${algoEntry.label}...`,
+    );
 
-    const run = algorithm === "BFS" ? bfs : dfs;
-    const { visitedOrder, path } = run(fresh, start, end);
+    if (algoEntry.heavy) {
+      // yield to the browser so the status text paints before the heavy compute
+      await sleep(0);
+    }
+
+    const { visitedOrder, path } = algoEntry.run(fresh, start, end);
 
     for (let i = 0; i < visitedOrder.length; i++) {
       const node = visitedOrder[i];
@@ -255,7 +277,7 @@ export default function GraphVisualizer() {
     }
 
     setStatus(
-      `${algorithm} finished. Visited ${visitedOrder.length} nodes, path length ${path.length - 1}.`,
+      `${algoEntry.label} finished. Visited ${visitedOrder.length} nodes, path length ${path.length - 1}.`,
     );
     isRunningRef.current = false;
     setIsRunning(false);
@@ -298,8 +320,11 @@ export default function GraphVisualizer() {
             value={algorithm}
             disabled={isRunning}
           >
-            <option value="BFS">BREADTH-FIRST SEARCH</option>
-            <option value="DFS">DEPTH-FIRST SEARCH</option>
+            {Object.entries(ALGORITHMS).map(([key, info]) => (
+              <option key={key} value={key}>
+                {info.label}
+              </option>
+            ))}
           </select>
         </div>
 
