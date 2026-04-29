@@ -69,6 +69,21 @@
     animation: pathPop 360ms ease-out;
 }
 
+.graph-node.node-component {
+    animation: componentFade 320ms ease-out;
+}
+
+@keyframes componentFade {
+    0% {
+        opacity: 0.2;
+        transform: scale(0.6);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .legend-swatch {
     width: 1rem;
     height: 1rem;

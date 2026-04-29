@@ -295,3 +295,117 @@ export function floydWarshall(grid, startNode, endNode) {
 
   return { visitedOrder, path };
 }
+
+export function unionFind(grid, startNode, endNode) {
+  const rows = grid.length;
+  const cols = grid[0].length;
+  const N = rows * cols;
+  const idx = (r, c) => r * cols + c;
+
+  const parent = new Int32Array(N);
+  const rank = new Int8Array(N);
+  for (let i = 0; i < N; i++) parent[i] = i;
+
+  function find(x) {
+    while (parent[x] !== x) {
+      parent[x] = parent[parent[x]];
+      x = parent[x];
+    }
+    return x;
+  }
+
+  function union(a, b) {
+    const ra = find(a);
+    const rb = find(b);
+    if (ra === rb) return false;
+    if (rank[ra] < rank[rb]) parent[ra] = rb;
+    else if (rank[ra] > rank[rb]) parent[rb] = ra;
+    else {
+      parent[rb] = ra;
+      rank[ra]++;
+    }
+    return true;
+  }
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c].isWall) continue;
+      if (c + 1 < cols && !grid[r][c + 1].isWall) {
+        union(idx(r, c), idx(r, c + 1));
+      }
+      if (r + 1 < rows && !grid[r + 1][c].isWall) {
+        union(idx(r, c), idx(r + 1, c));
+      }
+    }
+  }
+
+  // Assign each component a distinct hue using the golden-angle trick.
+  const rootColor = new Map();
+  let nextHue = 0;
+  function colorFor(root) {
+    let color = rootColor.get(root);
+    if (!color) {
+      const hue = (nextHue * 137.508) % 360;
+      color = `hsl(${hue.toFixed(1)}, 65%, 55%)`;
+      rootColor.set(root, color);
+      nextHue++;
+    }
+    return color;
+  }
+
+  const visitedOrder = [];
+  const componentColorOf = new Map();
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const node = grid[r][c];
+      if (node.isWall) continue;
+      const root = find(idx(r, c));
+      componentColorOf.set(`${r}-${c}`, colorFor(root));
+      visitedOrder.push(node);
+    }
+  }
+
+  const startRoot = find(idx(startNode.row, startNode.col));
+  const endRoot = find(idx(endNode.row, endNode.col));
+  const sameComponent = startRoot === endRoot;
+
+  let path = [];
+  if (sameComponent) {
+    const prev = new Map();
+    const seen = new Set([idx(startNode.row, startNode.col)]);
+    const queue = [startNode];
+    let found = false;
+    while (queue.length > 0 && !found) {
+      const cur = queue.shift();
+      if (cur === endNode) {
+        found = true;
+        break;
+      }
+      for (const [dr, dc] of NEIGHBOR_OFFSETS) {
+        const nr = cur.row + dr;
+        const nc = cur.col + dc;
+        if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+        const nb = grid[nr][nc];
+        if (nb.isWall) continue;
+        const nbIdx = idx(nr, nc);
+        if (seen.has(nbIdx)) continue;
+        seen.add(nbIdx);
+        prev.set(nbIdx, cur);
+        queue.push(nb);
+      }
+    }
+    let cur = endNode;
+    while (cur) {
+      path.unshift(cur);
+      cur = prev.get(idx(cur.row, cur.col)) || null;
+    }
+  }
+
+  return {
+    visitedOrder,
+    path,
+    componentColorOf,
+    componentCount: rootColor.size,
+    sameComponent,
+  };
+}

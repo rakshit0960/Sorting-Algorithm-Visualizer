@@ -1,6 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { astar, bfs, dfs, dijkstra, floydWarshall } from "../algorithms/graphAlgorithms";
+import {
+  astar,
+  bfs,
+  dfs,
+  dijkstra,
+  floydWarshall,
+  unionFind,
+} from "../algorithms/graphAlgorithms";
 
 const ALGORITHMS = {
   BFS: { label: "BREADTH-FIRST SEARCH", run: bfs },
@@ -8,6 +15,7 @@ const ALGORITHMS = {
   DIJKSTRA: { label: "DIJKSTRA'S ALGORITHM", run: dijkstra },
   ASTAR: { label: "A* SEARCH", run: astar },
   FLOYD_WARSHALL: { label: "FLOYD-WARSHALL", run: floydWarshall, heavy: true },
+  UNION_FIND: { label: "UNION-FIND (CONNECTED COMPONENTS)", run: unionFind },
 };
 
 const ROWS = 20;
@@ -207,7 +215,9 @@ export default function GraphVisualizer() {
     pathCellsRef.current = new Set();
     const nodes = document.querySelectorAll("[data-node]");
     nodes.forEach((el) => {
-      el.classList.remove("node-visited", "node-path");
+      el.classList.remove("node-visited", "node-path", "node-component");
+      el.style.backgroundColor = "";
+      el.style.borderColor = "";
     });
   }
 
@@ -243,20 +253,55 @@ export default function GraphVisualizer() {
       await sleep(0);
     }
 
-    const { visitedOrder, path } = algoEntry.run(fresh, start, end);
+    const result = algoEntry.run(fresh, start, end);
+    const { visitedOrder, path, componentColorOf } = result;
 
     for (let i = 0; i < visitedOrder.length; i++) {
       const node = visitedOrder[i];
       if (!isRunningRef.current) break;
       if (!node.isStart && !node.isEnd) {
         const el = document.getElementById(`node-${node.row}-${node.col}`);
-        if (el) el.classList.add("node-visited");
+        if (el) {
+          if (componentColorOf) {
+            const color = componentColorOf.get(`${node.row}-${node.col}`);
+            if (color) {
+              el.classList.add("node-component");
+              el.style.backgroundColor = color;
+              el.style.borderColor = color;
+            }
+          } else {
+            el.classList.add("node-visited");
+          }
+        }
         visitedCellsRef.current.add(`${node.row}-${node.col}`);
       }
       if (delay > 0) await sleep(delay);
     }
 
     if (!isRunningRef.current) {
+      return;
+    }
+
+    if (componentColorOf) {
+      if (result.sameComponent) {
+        for (const node of path) {
+          if (!node.isStart && !node.isEnd) {
+            const el = document.getElementById(`node-${node.row}-${node.col}`);
+            if (el) el.classList.add("node-path");
+            pathCellsRef.current.add(`${node.row}-${node.col}`);
+          }
+          await sleep(30);
+        }
+        setStatus(
+          `Union-Find finished. ${result.componentCount} component${result.componentCount === 1 ? "" : "s"}. Start and End are connected — path length ${path.length - 1}.`,
+        );
+      } else {
+        setStatus(
+          `Union-Find finished. ${result.componentCount} component${result.componentCount === 1 ? "" : "s"}. Start and End are in different components.`,
+        );
+      }
+      isRunningRef.current = false;
+      setIsRunning(false);
       return;
     }
 
